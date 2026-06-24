@@ -1,120 +1,544 @@
 <!doctype html>
 <html lang="he" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hack Zone V58</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Hack Zone V59</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
-  <header class="hero">
-    <div class="logoBox">↯</div>
+<header class="topbar">
+  <div class="brand">
+    <div class="logo"><span>⌁</span></div>
     <div>
-      <h1>Hack Zone V58</h1>
-      <p>Google בלבד · תפריט 3 נקודות · מוצרים · AI תיקון · עיצוב קלאסי</p>
+      <h1>Hack Zone V59</h1>
+      <p>Google בלבד · עיצוב מקורי · EmailJS · GitHub Pages חינם</p>
     </div>
-    <nav class="topPills">
-    <button data-jump="login">🔐 Google בלבד</button>
-    <button data-jump="dashboard">🎮 לוח משחק</button>
-    <button data-jump="shop">🛒 חנות</button>
-    <button data-jump="ai">🤖 AI תיקונים</button>
-    <button data-jump="problem">📧 שלח בעיה</button>
-  </nav>
+  </div>
+  <button id="logoutBtn" class="ghost hidden">יציאה</button>
 </header>
 
-  <main class="classicShell">
-    <section class="card loginPanel" id="login">
-      <h2>כניסה עם Google</h2>
-      <p class="muted">כל שחקן נשמר לפי חשבון Google, אבל המידע נשמר בדפדפן שלו כדי שהכול יהיה חינמי וללא שרת.</p>
-      <button id="googleLoginBtn" class="primary">🔐 התחבר עם Google</button>
-      <button id="logoutBtn" class="ghost hidden">התנתק</button>
-      <div id="userBox" class="userBox"></div>
-    </section>
+<main>
+  <section id="start" class="start">
+    <div class="card hero">
+      <h2>כניסה עם Google בלבד</h2>
+      <p>כל שחקן נשמר לפי חשבון Google. בפעם הראשונה כותבים שם במשחק וקוד 3 ספרות.</p>
+      <div class="bullets">
+        <span>🔐 Google בלבד</span>
+        <span>🎮 70 נקודות התחלה</span>
+        <span>🛒 חנות זולה יותר</span>
+        <span>⋮ תפריט פעולות על כל שחקן</span>
+      </div>
+    </div>
 
-    <section class="card gamePanel mainCard" id="dashboard">
-      <h2>לוח שחקן</h2>
-      <div class="stats">
-        <div><b id="points">0</b><span>מטבעות</span></div>
-        <div><b id="shields">0</b><span>מגנים</span></div>
-        <div><b id="attempts">10</b><span>ניסיונות היום</span></div>
-        <div><b id="debt">0</b><span>חוב</span></div>
-      </div>
-      <div class="actions">
-        <button id="dailyBtn">🎁 בונוס יומי</button>
-        <button id="scanBtn">🔎 סרוק קוד</button>
-        <button id="buyShieldBtn">🛡️ קנה מגן 50</button>
-        <button id="loanBtn">🏦 הלוואה 100</button>
-      </div>
-      <div class="codeBox">
-        <label>קוד משחק 000-499</label>
-        <input id="codeInput" maxlength="3" placeholder="123" />
-      </div>
-      <div id="gameMsg" class="msg"></div>
-    </section>
+    <div class="card loginCard">
+      <h2>התחברות</h2>
+      <p class="muted">בפעם הראשונה: כתוב שם וקוד. אחר כך החשבון נשמר לפי Google.</p>
 
-    <section class="card shopPanel" id="shop">
-      <h2>חנות מוצרים</h2>
-      <p class="muted">מוצרים הם בתוך המשחק בלבד.</p>
-      <div class="shopGrid">
-        <button id="buyShieldBtn2">🛡️ מגן · 50</button>
-        <button id="buyBoostBtn">⚡ בוסט · 80</button>
-        <button id="buyInsuranceBtn">🧾 ביטוח · 90</button>
-        <button id="buyVaultBtn">🔐 כספת · 120</button>
-        <button id="buyTrapBtn">🪤 מלכודת · 100</button>
-        <button id="buyAttemptBtn">🎟️ ניסיון נוסף · 30</button>
-      </div>
-      <h3>התיק שלי</h3>
-      <div id="inventoryBox" class="inventoryBox">אין מוצרים עדיין</div>
-    </section>
+      <label>שם במשחק
+        <input id="gameName" placeholder="עמית">
+      </label>
 
-    <section class="card playersPanel">
-      <h2>שחקנים</h2>
-      <p class="muted">בגרסה החינמית הרשימה מקומית לדפדפן, אבל העיצוב נשאר כמו משחק מלא.</p>
-      <div class="playerRow">
+      <label>קוד משחק 3 ספרות
+        <input id="googlePin" class="pin" maxlength="3" inputmode="numeric" placeholder="123">
+      </label>
+
+      <div id="googleButton"></div>
+      <p id="googleStatus" class="muted"></p>
+    </div>
+  </section>
+
+  <section id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="meMini">
+        <img id="miniAvatar" class="avatar">
         <div>
-          <b id="playerName">שחקן</b>
-          <span id="playerEmail">לא מחובר</span>
+          <b id="miniName">...</b>
+          <span id="miniPoints">0 נק׳</span>
         </div>
-        <button class="dotBtn" id="playerMenuBtn">⋮</button>
       </div>
-      <div id="playerMenu" class="playerMenu hidden">
-        <button>👀 צפייה בפרופיל</button>
-        <button>🛡️ השתמש במגן</button>
-        <button>🎁 שלח מוצר</button>
-      </div>
-    </section>
+      <div id="blockedStatus" class="blockedStatus hidden"></div>
+      <div id="attemptsStatus" class="attemptsStatus"></div>
+      <button class="nav active" data-tab="hack">🎯 פריצה</button>
+      <button class="nav" data-tab="captured">👥 שחקנים שפרצתי</button>
+      <button class="nav" data-tab="shop">🛒 חנות</button>
+      <button class="nav" data-tab="invest">📊 השקעות</button>
+      <button class="nav" data-tab="loans">🏦 הלוואות</button>
+      <button class="nav" data-tab="rules">📜 חוקי המשחק</button>
+      <button class="nav" data-tab="aiFixer">🤖 AI תיקונים</button>
+      <button class="nav" data-tab="scoreboard">🏆 לוח תוצאות</button>
+      <button id="adminNav" class="nav hidden" data-tab="admin">👑 אדמין</button>
+      <button class="nav" data-tab="profile">⚙️ פרופיל</button>
+    </aside>
 
-    <section class="card aiPanel" id="ai">
-      <h2>AI תיקון אוטומטי</h2>
-      <p class="muted">ה-AI בודק ומתקן בעיות בטוחות בתוך המשחק: חוב, ניסיונות, ערכים שבורים, תיק מוצרים ועוד.</p>
-      <button id="aiFixBtn">🤖 בדוק ותקן עכשיו</button>
-      <div id="aiMsg" class="msg"></div>
-    </section>
+    <section class="content">
+      <section id="tab-hack" class="tabPage">
+        <div class="grid two">
+          <div class="card">
+            <div class="row">
+              <h2>שחקנים</h2>
+              <button id="refreshBtn" class="ghost">רענן</button>
+            </div>
+            <p class="muted">לחץ על משתמש כדי לבחור מטרה. פריצה מוצלחת לוקחת 70% מהנקודות של המטרה. אפשר לפרוץ כל משתמש רק פעם ב־15 דקות.</p>
+            <div id="usersList" class="usersGrid"></div>
+          </div>
 
-    <section class="card problemPanel" id="problem">
-      <h2>שלח בעיה לעמית</h2>
-      <p class="muted">נשלח דרך EmailJS בלי סיסמת Gmail בקוד.</p>
-      <textarea id="problemText" rows="5" placeholder="כתוב פה מה הבעיה..."></textarea>
-      <button id="sendProblemBtn" class="primary">📧 שלח בעיה למייל</button>
-      <div id="emailMsg" class="msg"></div>
-    </section>
+          <div class="card">
+            <h2>מסוף פריצה</h2>
+            <div id="targetBox" class="target empty">בחר משתמש מהרשימה</div>
+            <div id="terminal" class="terminal">&gt; waiting for target...</div>
+            <label>נחש קוד 3 ספרות
+              <input id="guessPin" class="pin bigPin" maxlength="3" inputmode="numeric" placeholder="000">
+            </label>
+            <button id="guessBtn" class="primary full">פרוץ</button>
+            <p id="guessResult" class="result"></p>
+          </div>
+        </div>
+      </section>
 
-    <section class="card wide">
-      <h2>חוקי המשחק</h2>
-      <div class="rules">
-        <div>🎮 זה משחק לימודי בלבד — אין כאן פריצה אמיתית.</div>
-        <div>🔢 הקודים הם קודי משחק פנימיים מ־000 עד 499.</div>
-        <div>🛡️ מגנים עוזרים בתוך המשחק בלבד.</div>
-        <div>🏦 הלוואה במשחק יוצרת חוב משחק שצריך להחזיר.</div>
-        <div>🤖 AI תיקון מתקן רק נתוני משחק מקומיים ובטוחים.</div>
-        <div>📧 דיווחי בעיה נשלחים דרך EmailJS לעמית.</div>
-        <div>🌐 עובד חינם דרך GitHub Pages — בלי שרת ובלי כרטיס.</div>
-      </div>
-    </section>
-  </main>
+      <section id="tab-captured" class="tabPage hidden">
+        <div class="card">
+          <h2>שחקנים שפרצתי</h2>
+          <p class="muted">נשארים כאן עד ש־15 דקות נגמרות.</p>
+          <div id="capturedList" class="capturedGrid"></div>
+        </div>
 
-  <footer>Hack Zone V58 · Uploaded Design + All Features Edition</footer>
-  <script type="module" src="script.js"></script>
+        <div id="entered" class="card entered hidden">
+          <h2>נכנסת למשתמש שנפרץ</h2>
+          <div class="enteredHead">
+            <img id="enteredAvatar" class="avatar big">
+            <div>
+              <h3 id="enteredName">...</h3>
+              <p class="muted">אפשר לשנות רק שם ותמונה בתוך המשחק.</p>
+            </div>
+          </div>
+          <label>שם חדש
+            <input id="newCapturedName">
+          </label>
+          <label>תמונה חדשה
+            <input id="newCapturedAvatar" type="file" accept="image/png,image/jpeg,image/webp">
+          </label>
+          <button id="saveCapturedBtn" class="primary">שנה שם/תמונה</button>
+          <button id="exitCapturedBtn" class="ghost">סגור</button>
+        </div>
+      </section>
+
+      <section id="tab-shop" class="tabPage hidden">
+        <div class="card">
+          <h2>חנות</h2>
+          <p id="shopPoints" class="pointsLine">יש לך 0 נקודות</p>
+          <p class="muted">קונים מוצר והוא נשמר אצלך. מוצרים התקפיים משתמשים דרך 3 נקודות ליד שחקן. מוצרים הגנתיים פועלים עליך.</p>
+
+          <div class="shopGrid">
+            <div class="shopItem">
+              <h3>סורק 10</h3>
+              <p>נשמר אצלך, ואז שחקנים דרך 3 נקודות ליד שחקן.</p>
+              <button id="buyScan10Btn" class="primary">קנה ושמור 5 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>סורק 100</h3>
+              <p>נשמר אצלך, ואז שחקנים דרך 3 נקודות ליד שחקן.</p>
+              <button id="buyScan100Btn" class="primary">קנה ושמור 12 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>רמז ספרה ראשונה</h3>
+              <p>נשמר אצלך, ואז שחקנים דרך 3 נקודות ליד שחקן.</p>
+              <button id="buyHint1Btn" class="primary">קנה ושמור 10 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>רמז 2 ספרות</h3>
+              <p>נשמר אצלך, ואז שחקנים דרך 3 נקודות ליד שחקן.</p>
+              <button id="buyHint2Btn" class="primary">קנה ושמור 18 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>מתקפת מזל</h3>
+              <p>קונים עכשיו ושחקנים אחר כך דרך 3 נקודות ליד שחקן. 35% סיכוי.</p>
+              <button id="luckyAttackBtn" class="primary">קנה ושמור 8 נק׳</button>
+            </div>
+            <div class="shopItem featured">
+              <h3>פיצוח אוטומטי</h3>
+              <p>קונים עכשיו ושחקנים אחר כך דרך 3 נקודות ליד שחקן. 65% סיכוי.</p>
+              <button id="autoHackBtn" class="primary">קנה ושמור 35 נק׳</button>
+            </div>
+            <div class="shopItem featured">
+              <h3>כרטיס דו־קרב</h3>
+              <p>קונים עכשיו ושחקנים אחר כך דרך 3 נקודות ליד שחקן. אם אתה מנצח — זו פריצה. אם היריב מנצח — הוא רק חסם.</p>
+              <button id="duelTicketBtn" class="primary">קנה ושמור 30 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>מגן דו־קרב</h3>
+              <p>חוסם ניסיון דו־קרב אחד. היריב מבזבז כרטיס, ואתה לא נפרץ.</p>
+              <button id="duelShieldBtn" class="primary">קנה 25 נק׳</button>
+              <p id="duelShieldStatus" class="muted"></p>
+            </div>
+            <div class="shopItem featured">
+              <h3>בוסט פריצה כפול</h3>
+              <p>הפריצה המוצלחת הבאה שלך נותנת בונוס כפול. נשמר אצלך עד שימוש.</p>
+              <button id="boostBtn" class="primary">קנה 60 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>ביטוח פריצה</h3>
+              <p>אם פורצים אותך, הביטוח מוריד חצי מהכסף שנגנב. חד־פעמי.</p>
+              <button id="insuranceBtn" class="primary">קנה 45 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>כספת 500</h3>
+              <p>בפריצה הבאה נגדך, עד 500 מטבעות מוגנים מגניבה. חד־פעמי.</p>
+              <button id="vaultBtn" class="primary">קנה 50 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>ניסיון יומי נוסף</h3>
+              <p>נותן ניסיון פריצה נוסף גם אם נגמרו לך 10 הניסיונות היומיים.</p>
+              <button id="extraAttemptBtn" class="primary">קנה 40 נק׳</button>
+            </div>
+            <div class="shopItem featured">
+              <h3>מלכודת פריצה</h3>
+              <p>אם מישהו כמעט פורץ אותך, המלכודת חוסמת אותו ולוקחת ממנו קנס קטן.</p>
+              <button id="trapBtn" class="primary">קנה 55 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>מפתח קירור</h3>
+              <p>משתמשים דרך 3 נקודות על שחקן ומבטלים את ההמתנה של 15 דקות מולו.</p>
+              <button id="cooldownKeyBtn" class="primary">קנה ושמור 75 נק׳</button>
+            </div>
+            <div class="shopItem">
+              <h3>מגן פריצה</h3>
+              <p>חוסם פריצה אחת לגמרי: בלי מסך נפרצת, בלי חסימת 5 דקות, בלי החלפת קוד ובלי איבוד נקודות.</p>
+              <button id="buyShieldBtn" class="primary">קנה 15 נק׳</button>
+              <p id="shieldStatus" class="muted"></p>
+            </div>
+          </div>
+          <div id="shopOutput" class="shopOutput hidden"></div>
+        </div>
+      </section>
+
+      <section id="tab-invest" class="tabPage hidden">
+        <div class="card">
+          <div class="row">
+            <div>
+              <h2>אזור השקעות</h2>
+              <p class="muted">הנקודות שלך נקראות כאן סטארטקוין. ליד כל השקעה יש כפתור הוספה. אפשר להוסיף כל סכום גדול מ־50, ומתוך הסכום יורדת עמלת 10%. למשל: מכניסים 100, נכנסים להשקעה 90.</p>
+            </div>
+            <div class="investSummary">
+              <b id="investCash">0</b>
+              <span>סטארטקוין פנוי</span>
+              <b id="investTotal">0</b>
+              <span>בשקעות</span>
+            </div>
+          </div>
+
+<div id="investmentsList" class="investGrid"></div>
+        </div>
+      </section>
+
+
+      <section id="tab-loans" class="tabPage hidden">
+        <div class="grid two">
+          <div class="card">
+            <h2>הלוואות</h2>
+            <p class="muted">אפשר לקחת הלוואה ולקבל מטבעות מיד. ריבית בסיסית 10%, וכל יום נוסף מוסיף עוד 1%.</p>
+
+            <div class="loanBox">
+              <div>
+                <span>חוב נוכחי</span>
+                <b id="loanDebt">0</b>
+              </div>
+              <div>
+                <span>ריבית נוכחית</span>
+                <b id="loanInterest">10%</b>
+              </div>
+              <div>
+                <span>זמן להחזר</span>
+                <b id="loanTimeLeft">אין</b>
+              </div>
+              <div>
+                <span>מטבעות שיש לך</span>
+                <b id="loanCoins">0</b>
+              </div>
+            </div>
+
+            <label>כמה לקחת?
+              <input id="loanAmount" inputmode="numeric" placeholder="לדוגמה 500">
+            </label>
+
+            <label>תוך כמה זמן להחזיר?
+              <select id="loanDays">
+                <option value="1">יום 1 — ריבית 10%</option>
+                <option value="2">2 ימים — ריבית 11%</option>
+                <option value="3">3 ימים — ריבית 12%</option>
+                <option value="5">5 ימים — ריבית 14%</option>
+                <option value="7">7 ימים — ריבית 16%</option>
+                <option value="10">10 ימים — ריבית 19%</option>
+              </select>
+            </label>
+
+            <button id="takeLoanBtn" class="primary full">קח הלוואה</button>
+
+            <p class="muted loanExample">דוגמה: לוקחים 1000 ל־3 ימים → מקבלים 1000 עכשיו → צריך להחזיר 1120. אם מאחרים, כל מטבע הולך אוטומטית לחוב.</p>
+          </div>
+
+          <div class="card">
+            <h2>החזר הלוואה</h2>
+            <p class="muted">אפשר להחזיר חלק או הכול. אם החזרת הכול, החוב נסגר.</p>
+
+            <label>כמה להחזיר?
+              <input id="repayLoanAmount" inputmode="numeric" placeholder="לדוגמה 200">
+            </label>
+            <button id="repayLoanBtn" class="ghost full">החזר</button>
+            <button id="repayAllLoanBtn" class="primary full">החזר הכול</button>
+
+            <div id="loanOutput" class="shopOutput hidden"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-scoreboard" class="tabPage hidden">
+        <div class="card">
+          <h2>לוח תוצאות פריצה</h2>
+          <div id="leaderboard" class="leaderboard"></div>
+        </div>
+      </section>
+
+      <section id="tab-profile" class="tabPage hidden">
+        <div class="grid two">
+          <div class="card">
+            <h2>הפרופיל שלי</h2>
+            <div class="enteredHead">
+              <img id="meAvatar" class="avatar big">
+              <div>
+                <h3 id="meName">...</h3>
+                <p id="meStats" class="muted"></p>
+              </div>
+            </div>
+            <label>שם חדש
+              <input id="myName">
+            </label>
+            <label>תמונה חדשה
+              <input id="myAvatarInput" type="file" accept="image/png,image/jpeg,image/webp">
+            </label>
+            <button id="saveMeBtn" class="primary">שמור פרופיל</button>
+          </div>
+          <div class="card">
+            <h2>שינוי קוד משחק</h2>
+            <label>קוד ישן
+              <input id="oldPin" class="pin" maxlength="3" inputmode="numeric">
+            </label>
+            <label>קוד חדש
+              <input id="newPin" class="pin" maxlength="3" inputmode="numeric">
+            </label>
+            <button id="changePinBtn" class="primary">שנה קוד</button>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="tab-admin" class="tabPage hidden">
+        <div class="grid two">
+          <div class="card adminCard">
+            <h2>👑 מצב אדמין</h2>
+            <p class="muted">מופיע רק למי שהשם שלו במשחק הוא בדיוק: עמית</p>
+
+            <label>בחר שחקן
+              <select id="adminTargetSelect"></select>
+            </label>
+
+            <div id="adminTargetInfo" class="adminTargetInfo">בחר שחקן מהרשימה.</div>
+
+            <h3>תרומת מוצר</h3>
+            <p class="muted">בחר מוצר מהרשימה, כתוב כמות, ואז אפשר לתרום או להוריד מהשחקן.</p>
+            <label>מה לתת?
+              <select id="adminGiftItem">
+                <option value="points">מטבעות</option>
+                <option value="shield">מגן פריצה</option>
+                <option value="scan10">סורק 10</option>
+                <option value="scan100">סורק 100</option>
+                <option value="hint1">רמז ספרה ראשונה</option>
+                <option value="hint2">רמז 2 ספרות</option>
+                <option value="lucky">מתקפת מזל</option>
+                <option value="autoHack">פיצוח אוטומטי</option>
+                <option value="duel">כרטיס דו־קרב</option>
+                <option value="duelShield">מגן דו־קרב</option>
+                <option value="boost">בוסט פריצה כפול</option>
+                <option value="insurance">ביטוח פריצה</option>
+                <option value="vault">כספת 500</option>
+                <option value="extraAttempt">ניסיון יומי נוסף</option>
+                <option value="trap">מלכודת פריצה</option>
+                <option value="cooldownKey">מפתח קירור</option>
+              </select>
+            </label>
+            <div class="adminRow three">
+              <input id="adminGiftAmount" inputmode="numeric" placeholder="כמות">
+              <button id="adminGiveGiftBtn" class="primary">תרום</button>
+              <button id="adminRemoveGiftBtn" class="danger">הורד</button>
+            </div>
+
+            <button id="adminResetAttemptsBtn" class="ghost full">אפס לו ניסיונות פריצה יומיים</button>
+            <button id="adminForceCodeBtn" class="ghost full">חייב אותו להחליף קוד</button>
+          </div>
+
+          <div class="card adminCard">
+            <h2>⛔ באנים</h2>
+            <p class="muted">באן עוצר פעולות במשחק לזמן שבחרת.</p>
+
+            <label>זמן באן בדקות
+              <input id="adminBanMinutes" inputmode="numeric" placeholder="לדוגמה 10">
+            </label>
+
+            <label>סיבה
+              <input id="adminBanReason" placeholder="לדוגמה ספאם / הצקה / בדיקה">
+            </label>
+
+            <button id="adminBanBtn" class="danger full">תן באן</button>
+            <button id="adminUnbanBtn" class="primary full">הסר באן</button>
+
+            <div id="adminOutput" class="shopOutput hidden"></div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section id="tab-aiFixer" class="tabPage hidden">
+        <div class="grid two">
+          <div class="card">
+            <h2>AI תיקונים</h2>
+            <p class="muted">כתוב ל-AI מה הבעיה במשחק, והוא ינסה להבין ולתקן דברים שהוא יכול לתקן לבד. זה עובד רק בתוך המשחק.</p>
+
+            <label>כתוב ל-AI מה הבעיה
+              <textarea id="aiChatText" placeholder="לדוגמה: נתקע לי מסך נפרצת / החנות לא עובדת / החוב תקוע / נגמרו לי ניסיונות / שליחת הערות לא עובדת"></textarea>
+            </label>
+
+            <button id="aiChatFixBtn" class="primary full">שלח ל-AI ונסה לתקן</button>
+
+            <div class="adminRow">
+              <button id="aiDiagnoseBtn" class="ghost">בדוק בעיות</button>
+              <button id="aiFixSelfBtn" class="ghost">תיקון מהיר לחשבון שלי</button>
+            </div>
+
+            <button id="aiFixSystemBtn" class="danger full hidden">AI תיקון מערכת — אדמין</button>
+
+            <div class="ruleList">
+              <div>✅ יכול לנקות מסך “נפרצת” שנתקע</div>
+              <div>✅ יכול לנקות חסימות ישנות</div>
+              <div>✅ יכול לתקן נקודות/חוב/מוצרים שנשברו</div>
+              <div>✅ יכול להסביר מה לעשות אם משהו לא ניתן לתיקון אוטומטי</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>תשובת AI</h2>
+            <div id="aiOutput" class="shopOutput">
+              <p class="muted">כתוב הודעה ל-AI ולחץ “שלח ל-AI ונסה לתקן”.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-rules" class="tabPage hidden">
+        <div class="grid two">
+          <div class="card">
+            <h2>חוקי המשחק</h2>
+            <p class="muted">Hack Zone הוא משחק פנימי בלבד. אין פה פריצות אמיתיות, אין סיסמאות אמיתיות, ואין שימוש מחוץ למשחק.</p>
+            <div class="ruleList">
+              <div>🔢 קודים: 000 עד 499 בלבד.</div>
+              <div>🎯 10 ניסיונות פריצה ביום, ואפשר לקנות ניסיון נוסף.</div>
+              <div>🛡️ מגן פריצה חוסם פריצה רעמיתה.</div>
+              <div>⚔️ דו־קרב הוא דרך פריצה משחקית: אם היריב מנצח, הוא רק חוסם.</div>
+              <div>🏦 הלוואות חייבים להחזיר בזמן, אחרת כל מטבע הולך לחוב.</div>
+            </div>
+          </div>
+          <div class="card">
+            <h2>מה חדש בגרסת פרסום</h2>
+            <p class="muted">הוספתי עוד שכבות משחק כדי שזה יהיה יותר מעניין לאורך זמן.</p>
+            <div class="ruleList">
+              <div>🚀 בוסט פריצה כפול</div>
+              <div>🧾 ביטוח פריצה</div>
+              <div>🏦 כספת 500</div>
+              <div>➕ ניסיון יומי נוסף</div>
+              <div>🪤 מלכודת פריצה</div>
+              <div>🔑 מפתח קירור</div>
+              <div>🎁 בונוס יומי של 50 מטבעות</div>
+            </div>
+          </div>
+        </div>
+
+          <div class="card">
+            <h2>שליחת הערה לעמית</h2>
+            <p class="muted">כתוב שם, נושא והערה. זה יישמר במשחק ויישלח אוטומטית למייל של עמית אחרי שמגדירים EmailJS.</p>
+            <label>שם
+              <input id="feedbackName" placeholder="השם שלך">
+            </label>
+            <label>נושא
+              <input id="feedbackSubject" placeholder="לדוגמה: באג בחנות">
+            </label>
+            <label>הערה
+              <textarea id="feedbackNote" placeholder="כתוב כאן את ההערה שלך"></textarea>
+            </label>
+            <button id="sendFeedbackBtn" class="primary full">שלח הערה</button>
+            <div id="feedbackOutput" class="shopOutput hidden"></div>
+          </div>
+      </section>
+
+      <section class="card eventsCard">
+        <h2>אירועים</h2>
+        <div id="events" class="events"></div>
+      </section>
+    </section>
+  </section>
+</main>
+
+<div id="hackedOverlay" class="hackedOverlay hidden">
+  <div class="matrixRain"></div>
+  <div class="hackedBox">
+    <div class="warningIcon">⚠️</div>
+    <h2>נפרצת!</h2>
+    <p id="hackedMessage">מישהו פרץ אליך במשחק.</p>
+    <div class="fakeTerminal" id="fakeTerminal">
+      &gt; ACCESS DETECTED<br>
+      &gt; PROFILE CONTROL COMPROMISED<br>
+      &gt; HACK BLOCK: 5 MINUTES
+    </div>
+    <div id="hackedTimer" class="hackedTimer">60</div>
+    <button id="closeHacked" class="primary hidden">הבנתי</button>
+  </div>
+</div>
+
+<div id="changeCodeOverlay" class="hackedOverlay hidden">
+  <div class="matrixRain calm"></div>
+  <div class="hackedBox changeBox">
+    <div class="warningIcon">🔐</div>
+    <h2>החלף קוד</h2>
+    <p>מסך הפריצה נגמר. כדי לחזור למשחק, החלף קוד משחק.</p>
+    <label>קוד חדש 3 ספרות
+      <input id="forcedNewPin" class="pin bigPin" maxlength="3" inputmode="numeric" placeholder="123">
+    </label>
+    <button id="forceChangePinBtn" class="primary full">איפוס קוד וחזרה למשחק</button>
+  </div>
+</div>
+
+
+<div id="banOverlay" class="hackedOverlay hidden">
+  <div class="matrixRain dangerRain"></div>
+  <div class="hackedBox banBox">
+    <div class="warningIcon">⛔</div>
+    <h2>קיבלת באן</h2>
+    <p id="banMessage">קיבלת באן במשחק.</p>
+    <div id="banTimer" class="hackedTimer">0</div>
+    <p class="muted">עד שהזמן נגמר אי אפשר לעשות פעולות במשחק.</p>
+  </div>
+</div>
+
+<div id="giftOverlay" class="giftOverlay hidden">
+  <div class="giftBox">
+    <div class="giftIcon">🎁</div>
+    <h2>קיבלת מוצר</h2>
+    <p id="giftMessage">קיבלת משהו מאדמין.</p>
+    <button id="closeGiftBtn" class="primary full">סבבה</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script type="module" src="script.js"></script>
 </body>
 </html>

@@ -1,23 +1,24 @@
-# Hack Zone V58 — Uploaded Design + All New Features
+# Hack Zone V59 — Original Design + Free Features
 
-לקחתי את העיצוב מהקובץ שהעלית, והשארתי בפנים את הדברים החדשים:
+הגרסה הזאת משתמשת בעיצוב המקורי הישן ממש מתוך V43:
+- אותו HTML בסיסי
+- אותו CSS ישן
+- אותו מבנה: Sidebar, tabs, חנות, הלוואות, השקעות, AI, חוקים וכו׳
 
-- GitHub Pages חינמי
+אבל מאחורה היא עובדת חינם:
+- GitHub Pages
 - Firebase Google Login
-- EmailJS לשליחת בעיות למייל
-- AI תיקון אוטומטי פנימי
-- חנות מוצרים
-- תיק מוצרים
-- תפריט 3 נקודות
+- EmailJS לשליחת בעיה לעמית
+- שמירה מקומית בדפדפן
 - בלי שרת
 - בלי Billing
-- בלי סיסמאות בקוד
+- בלי Firestore
+- בלי סיסמת Gmail בקוד
 
-עדכון באתר:
-1. פתח GitHub repository:
-   hack-zone1
+עדכון GitHub:
+1. פתח את repository hack-zone1
 2. Add file -> Upload files
-3. העלה:
+3. תעלה:
    index.html
    style.css
    script.js
