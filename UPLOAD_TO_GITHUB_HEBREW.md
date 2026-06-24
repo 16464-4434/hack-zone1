@@ -1,12 +1,15 @@
-# להעלות ל-GitHub
+# העלאה ל-GitHub
 
-תעלה את כל הקבצים:
+תעלה:
 - index.html
 - style.css
 - script.js
 - README_HEBREW.md
 - UPLOAD_TO_GITHUB_HEBREW.md
 
-אחרי Commit:
+ואז:
+- Commit changes
 - חכה דקה
-- באתר Ctrl + F5
+- Ctrl + F5 באתר
+
+צריך גם Realtime Database פעיל עם ה-Rules שב-README.

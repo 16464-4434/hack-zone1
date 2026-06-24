@@ -774,3 +774,31 @@ textarea:focus{
   background:rgba(255,79,127,.09);
   color:#ffd4df;
 }
+
+/* V63 real-player attack tools */
+.attackTools{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.attackTools button{
+  min-height:44px;
+  white-space:normal;
+}
+.statusOnline{
+  color:#47ff92;
+}
+.statusHacked{
+  color:#ff6b86;
+}
+.attackNote{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.09);
+}
+@media(max-width:700px){
+  .attackTools{grid-template-columns:1fr}
+}
