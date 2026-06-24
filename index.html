@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Hack Zone V59</title>
+  <title>Hack Zone V61</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
@@ -12,8 +12,8 @@
   <div class="brand">
     <div class="logo"><span>⌁</span></div>
     <div>
-      <h1>Hack Zone V59</h1>
-      <p>Google בלבד · עיצוב מקורי · EmailJS · GitHub Pages חינם</p>
+      <h1>Hack Zone V61</h1>
+      <p>Google בלבד · תפריט 3 נקודות · מוצרים לשימוש מאוחר · אדמין</p>
     </div>
   </div>
   <button id="logoutBtn" class="ghost hidden">יציאה</button>
@@ -403,13 +403,18 @@
         <div class="grid two">
           <div class="card">
             <h2>AI תיקונים</h2>
-            <p class="muted">כתוב ל-AI מה הבעיה במשחק, והוא ינסה להבין ולתקן דברים שהוא יכול לתקן לבד. זה עובד רק בתוך המשחק.</p>
+            <p class="muted">הגרסה הזאת מחוברת ל-Ollama מקומי: qwen2.5:3b. אם Ollama פתוח, ה-AI יהיה חכם באמת; אם לא, הוא יעבור לגיבוי פנימי.</p>
+
+            <div id="ollamaStatusBox" class="ollamaStatus">
+              <b>מצב Ollama:</b> <span id="ollamaStatusText">עוד לא נבדק</span>
+            </div>
+            <button id="checkOllamaBtn" class="ghost full">בדוק חיבור ל-Ollama</button>
 
             <label>כתוב ל-AI מה הבעיה
               <textarea id="aiChatText" placeholder="לדוגמה: נתקע לי מסך נפרצת / החנות לא עובדת / החוב תקוע / נגמרו לי ניסיונות / שליחת הערות לא עובדת"></textarea>
             </label>
 
-            <button id="aiChatFixBtn" class="primary full">שלח ל-AI ונסה לתקן</button>
+            <button id="aiChatFixBtn" class="primary full">שלח ל-AI חכם ותקן</button>
 
             <div class="adminRow">
               <button id="aiDiagnoseBtn" class="ghost">בדוק בעיות</button>
@@ -423,13 +428,16 @@
               <div>✅ יכול לנקות חסימות ישנות</div>
               <div>✅ יכול לתקן נקודות/חוב/מוצרים שנשברו</div>
               <div>✅ יכול להסביר מה לעשות אם משהו לא ניתן לתיקון אוטומטי</div>
+              <div>🧠 אם Ollama פתוח — משתמש ב-AI אמיתי ולא רק בחוקים קבועים</div>
+              <div>🔒 ה-AI מוגבל לתיקונים בתוך המשחק בלבד</div>
+              <div>🛠️ מתקן אוטומטית בכל כניסה/רענון אם הוא מזהה תקלה בטוחה</div>
             </div>
           </div>
 
           <div class="card">
             <h2>תשובת AI</h2>
             <div id="aiOutput" class="shopOutput">
-              <p class="muted">כתוב הודעה ל-AI ולחץ “שלח ל-AI ונסה לתקן”.</p>
+              <p class="muted">כתוב הודעה ל-AI ולחץ “שלח ל-AI חכם ותקן”.</p>
             </div>
           </div>
         </div>
@@ -465,7 +473,7 @@
 
           <div class="card">
             <h2>שליחת הערה לעמית</h2>
-            <p class="muted">כתוב שם, נושא והערה. זה יישמר במשחק ויישלח אוטומטית למייל של עמית אחרי שמגדירים EmailJS.</p>
+            <p class="muted">כתוב שם, נושא והערה. זה יישמר במשחק ויישלח אוטומטית למייל של עמית אחרי שמגדירים email-config.json.</p>
             <label>שם
               <input id="feedbackName" placeholder="השם שלך">
             </label>
