@@ -1,29 +1,14 @@
-# העלאה ל-GitHub Pages
+# עדכון GitHub Pages
 
-1. צור Repository חדש בשם:
-hack-zone
-
-2. העלה את הקבצים:
-index.html
-style.css
-script.js
-README_HEBREW.md
-
-3. ב-GitHub:
-Settings -> Pages
-
-4. Source:
-Deploy from a branch
-
-5. Branch:
-main
-
-6. Folder:
-/root
-
-7. Save
-
-8. אחרי שהאתר עולה, שלח לי את הכתובת.
-
-9. צריך להוסיף את הדומיין ב-Firebase:
-Authentication -> Settings -> Authorized domains
+1. כנס ל-GitHub -> hack-zone1
+2. לחץ Add file
+3. לחץ Upload files
+4. גרור את הקבצים מתוך V58:
+   index.html
+   style.css
+   script.js
+   README_HEBREW.md
+   UPLOAD_TO_GITHUB_HEBREW.md
+5. לחץ Commit changes
+6. חכה דקה
+7. פתח את האתר ועשה Ctrl + F5

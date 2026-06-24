@@ -30,7 +30,7 @@ let state = null;
 const todayKey = () => new Date().toISOString().slice(0,10);
 const pad3 = (n) => String(n).padStart(3,"0");
 const validCode = (s) => /^\d{3}$/.test(s) && Number(s) >= 0 && Number(s) <= 499;
-function userKey(user){ return "hackzone_v55_user_" + (user.email || user.uid || "guest").toLowerCase(); }
+function userKey(user){ return "hackzone_v58_user_" + (user.email || user.uid || "guest").toLowerCase(); }
 function defaultState(user){
   return { name:user.displayName||"שחקן", email:user.email||"", points:70, shields:0, attemptsLeft:10, lastDaily:"", lastAttemptDay:todayKey(), debt:0, inventory:{}, createdAt:Date.now(), updatedAt:Date.now() };
 }
@@ -54,6 +54,14 @@ function render(){
   $("shields").textContent = state ? state.shields : "0";
   $("attempts").textContent = state ? state.attemptsLeft : "0";
   $("debt").textContent = state ? state.debt : "0";
+  const inv = $("inventoryBox");
+  if(inv && state){
+    const items = state.inventory || {};
+    const rows = Object.entries(items).filter(([k,v])=>v>0).map(([k,v])=>`${k}: ${v}`);
+    inv.textContent = rows.length ? rows.join(" · ") : "אין מוצרים עדיין";
+  }
+  if($("playerName")) $("playerName").textContent = state ? state.name : "שחקן";
+  if($("playerEmail")) $("playerEmail").textContent = state ? state.email : "לא מחובר";
 }
 function setMsg(id,text,cls=""){ const el=$(id); el.textContent=text; el.className="msg "+cls; }
 function aiAutoRepair(show=true){
@@ -148,3 +156,37 @@ $("sendProblemBtn").onclick=async()=>{
     setMsg("emailMsg","שליחה נכשלה: "+(err?.text || err?.message || "שגיאה לא ידועה"),"bad");
   }
 };
+
+
+document.querySelectorAll(".topPills button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const el = document.getElementById(btn.dataset.jump);
+    if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+});
+if($("playerMenuBtn")){
+  $("playerMenuBtn").onclick = ()=>{
+    $("playerMenu").classList.toggle("hidden");
+  };
+}
+function buyItem(key, label, price){
+  if(!requireLogin()) return;
+  if(state.points < price){
+    setMsg("gameMsg",`אין מספיק מטבעות בשביל ${label}.`,"warn");
+    return;
+  }
+  state.points -= price;
+  state.inventory = state.inventory || {};
+  state.inventory[label] = (state.inventory[label] || 0) + 1;
+  if(key === "shield") state.shields += 1;
+  if(key === "attempt") state.attemptsLeft += 1;
+  saveState();
+  render();
+  setMsg("gameMsg",`קנית ${label}.`,"good");
+}
+if($("buyShieldBtn2")) $("buyShieldBtn2").onclick=()=>buyItem("shield","מגן",50);
+if($("buyBoostBtn")) $("buyBoostBtn").onclick=()=>buyItem("boost","בוסט",80);
+if($("buyInsuranceBtn")) $("buyInsuranceBtn").onclick=()=>buyItem("insurance","ביטוח",90);
+if($("buyVaultBtn")) $("buyVaultBtn").onclick=()=>buyItem("vault","כספת",120);
+if($("buyTrapBtn")) $("buyTrapBtn").onclick=()=>buyItem("trap","מלכודת",100);
+if($("buyAttemptBtn")) $("buyAttemptBtn").onclick=()=>buyItem("attempt","ניסיון נוסף",30);

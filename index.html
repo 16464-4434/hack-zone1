@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hack Zone V55</title>
+  <title>Hack Zone V58</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
@@ -11,13 +11,20 @@
   <header class="hero">
     <div class="logoBox">↯</div>
     <div>
-      <h1>Hack Zone V55</h1>
-      <p>גרסת GitHub Pages חינמית · Google Login · שליחת בעיות למייל · משחק לימודי בלבד</p>
+      <h1>Hack Zone V58</h1>
+      <p>Google בלבד · תפריט 3 נקודות · מוצרים · AI תיקון · עיצוב קלאסי</p>
     </div>
-  </header>
+    <nav class="topPills">
+    <button data-jump="login">🔐 Google בלבד</button>
+    <button data-jump="dashboard">🎮 לוח משחק</button>
+    <button data-jump="shop">🛒 חנות</button>
+    <button data-jump="ai">🤖 AI תיקונים</button>
+    <button data-jump="problem">📧 שלח בעיה</button>
+  </nav>
+</header>
 
-  <main class="layout">
-    <section class="card">
+  <main class="classicShell">
+    <section class="card loginPanel" id="login">
       <h2>כניסה עם Google</h2>
       <p class="muted">כל שחקן נשמר לפי חשבון Google, אבל המידע נשמר בדפדפן שלו כדי שהכול יהיה חינמי וללא שרת.</p>
       <button id="googleLoginBtn" class="primary">🔐 התחבר עם Google</button>
@@ -25,7 +32,7 @@
       <div id="userBox" class="userBox"></div>
     </section>
 
-    <section class="card">
+    <section class="card gamePanel mainCard" id="dashboard">
       <h2>לוח שחקן</h2>
       <div class="stats">
         <div><b id="points">0</b><span>מטבעות</span></div>
@@ -46,14 +53,46 @@
       <div id="gameMsg" class="msg"></div>
     </section>
 
-    <section class="card">
+    <section class="card shopPanel" id="shop">
+      <h2>חנות מוצרים</h2>
+      <p class="muted">מוצרים הם בתוך המשחק בלבד.</p>
+      <div class="shopGrid">
+        <button id="buyShieldBtn2">🛡️ מגן · 50</button>
+        <button id="buyBoostBtn">⚡ בוסט · 80</button>
+        <button id="buyInsuranceBtn">🧾 ביטוח · 90</button>
+        <button id="buyVaultBtn">🔐 כספת · 120</button>
+        <button id="buyTrapBtn">🪤 מלכודת · 100</button>
+        <button id="buyAttemptBtn">🎟️ ניסיון נוסף · 30</button>
+      </div>
+      <h3>התיק שלי</h3>
+      <div id="inventoryBox" class="inventoryBox">אין מוצרים עדיין</div>
+    </section>
+
+    <section class="card playersPanel">
+      <h2>שחקנים</h2>
+      <p class="muted">בגרסה החינמית הרשימה מקומית לדפדפן, אבל העיצוב נשאר כמו משחק מלא.</p>
+      <div class="playerRow">
+        <div>
+          <b id="playerName">שחקן</b>
+          <span id="playerEmail">לא מחובר</span>
+        </div>
+        <button class="dotBtn" id="playerMenuBtn">⋮</button>
+      </div>
+      <div id="playerMenu" class="playerMenu hidden">
+        <button>👀 צפייה בפרופיל</button>
+        <button>🛡️ השתמש במגן</button>
+        <button>🎁 שלח מוצר</button>
+      </div>
+    </section>
+
+    <section class="card aiPanel" id="ai">
       <h2>AI תיקון אוטומטי</h2>
       <p class="muted">ה-AI בודק ומתקן בעיות בטוחות בתוך המשחק: חוב, ניסיונות, ערכים שבורים, תיק מוצרים ועוד.</p>
       <button id="aiFixBtn">🤖 בדוק ותקן עכשיו</button>
       <div id="aiMsg" class="msg"></div>
     </section>
 
-    <section class="card">
+    <section class="card problemPanel" id="problem">
       <h2>שלח בעיה לעמית</h2>
       <p class="muted">נשלח דרך EmailJS בלי סיסמת Gmail בקוד.</p>
       <textarea id="problemText" rows="5" placeholder="כתוב פה מה הבעיה..."></textarea>
@@ -69,11 +108,13 @@
         <div>🛡️ מגנים עוזרים בתוך המשחק בלבד.</div>
         <div>🏦 הלוואה במשחק יוצרת חוב משחק שצריך להחזיר.</div>
         <div>🤖 AI תיקון מתקן רק נתוני משחק מקומיים ובטוחים.</div>
+        <div>📧 דיווחי בעיה נשלחים דרך EmailJS לעמית.</div>
+        <div>🌐 עובד חינם דרך GitHub Pages — בלי שרת ובלי כרטיס.</div>
       </div>
     </section>
   </main>
 
-  <footer>Hack Zone V55 · Free GitHub Pages Edition</footer>
+  <footer>Hack Zone V58 · Uploaded Design + All Features Edition</footer>
   <script type="module" src="script.js"></script>
 </body>
 </html>
