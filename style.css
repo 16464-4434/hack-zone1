@@ -748,3 +748,29 @@ textarea:focus{
   border-color:rgba(84,255,142,.65);
   box-shadow:0 0 0 4px rgba(84,255,142,.10),0 0 28px rgba(39,216,255,.13);
 }
+
+
+.ollamaStatus{
+  border:1px solid rgba(119,245,255,.20);
+  background:rgba(39,216,255,.07);
+  border-radius:18px;
+  padding:13px 15px;
+  margin:12px 0;
+  color:#dff7ff;
+  line-height:1.5;
+}
+.ollamaStatus.ok{
+  border-color:rgba(84,255,142,.42);
+  background:rgba(84,255,142,.09);
+  color:#dfffee;
+}
+.ollamaStatus.warn{
+  border-color:rgba(255,209,93,.42);
+  background:rgba(255,209,93,.09);
+  color:#fff0b8;
+}
+.ollamaStatus.bad{
+  border-color:rgba(255,79,127,.42);
+  background:rgba(255,79,127,.09);
+  color:#ffd4df;
+}
