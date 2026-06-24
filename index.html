@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hack Zone V55</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="logoBox">↯</div>
+    <div>
+      <h1>Hack Zone V55</h1>
+      <p>גרסת GitHub Pages חינמית · Google Login · שליחת בעיות למייל · משחק לימודי בלבד</p>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <h2>כניסה עם Google</h2>
+      <p class="muted">כל שחקן נשמר לפי חשבון Google, אבל המידע נשמר בדפדפן שלו כדי שהכול יהיה חינמי וללא שרת.</p>
+      <button id="googleLoginBtn" class="primary">🔐 התחבר עם Google</button>
+      <button id="logoutBtn" class="ghost hidden">התנתק</button>
+      <div id="userBox" class="userBox"></div>
+    </section>
+
+    <section class="card">
+      <h2>לוח שחקן</h2>
+      <div class="stats">
+        <div><b id="points">0</b><span>מטבעות</span></div>
+        <div><b id="shields">0</b><span>מגנים</span></div>
+        <div><b id="attempts">10</b><span>ניסיונות היום</span></div>
+        <div><b id="debt">0</b><span>חוב</span></div>
+      </div>
+      <div class="actions">
+        <button id="dailyBtn">🎁 בונוס יומי</button>
+        <button id="scanBtn">🔎 סרוק קוד</button>
+        <button id="buyShieldBtn">🛡️ קנה מגן 50</button>
+        <button id="loanBtn">🏦 הלוואה 100</button>
+      </div>
+      <div class="codeBox">
+        <label>קוד משחק 000-499</label>
+        <input id="codeInput" maxlength="3" placeholder="123" />
+      </div>
+      <div id="gameMsg" class="msg"></div>
+    </section>
+
+    <section class="card">
+      <h2>AI תיקון אוטומטי</h2>
+      <p class="muted">ה-AI בודק ומתקן בעיות בטוחות בתוך המשחק: חוב, ניסיונות, ערכים שבורים, תיק מוצרים ועוד.</p>
+      <button id="aiFixBtn">🤖 בדוק ותקן עכשיו</button>
+      <div id="aiMsg" class="msg"></div>
+    </section>
+
+    <section class="card">
+      <h2>שלח בעיה לעמית</h2>
+      <p class="muted">נשלח דרך EmailJS בלי סיסמת Gmail בקוד.</p>
+      <textarea id="problemText" rows="5" placeholder="כתוב פה מה הבעיה..."></textarea>
+      <button id="sendProblemBtn" class="primary">📧 שלח בעיה למייל</button>
+      <div id="emailMsg" class="msg"></div>
+    </section>
+
+    <section class="card wide">
+      <h2>חוקי המשחק</h2>
+      <div class="rules">
+        <div>🎮 זה משחק לימודי בלבד — אין כאן פריצה אמיתית.</div>
+        <div>🔢 הקודים הם קודי משחק פנימיים מ־000 עד 499.</div>
+        <div>🛡️ מגנים עוזרים בתוך המשחק בלבד.</div>
+        <div>🏦 הלוואה במשחק יוצרת חוב משחק שצריך להחזיר.</div>
+        <div>🤖 AI תיקון מתקן רק נתוני משחק מקומיים ובטוחים.</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Hack Zone V55 · Free GitHub Pages Edition</footer>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
