@@ -66,7 +66,7 @@ function toast(msg) {
 }
 
 function userKey(user) {
-  return "hackzone_v63_" + (user.email || user.uid || "guest").toLowerCase();
+  return "hackzone_v64_" + (user.email || user.uid || "guest").toLowerCase();
 }
 function makeDefault(user) {
   const inputName = ($("gameName")?.value || "").trim();
@@ -534,7 +534,18 @@ function renderUsers() {
           <b>${p.name}</b>
           <span class="${hacked ? "statusHacked" : "statusOnline"}">${num(p.points)} נק׳ · ${hacked ? "נפרץ כרגע" : "מחובר עכשיו"}</span>
         </div>
-        <button class="dots" data-id="${p.uid}">⋮</button>
+        <button class="dots" data-id="${p.uid}" title="פעולות">⋮</button>
+        <div class="playerActionMenu hidden" data-menu="${p.uid}">
+          <button data-action="select" data-id="${p.uid}">🎯 בחר שחקן</button>
+          <button data-action="regular" data-id="${p.uid}">🔓 פריצה רגילה</button>
+          <button data-action="scan10" data-id="${p.uid}">🔎 סורק 10</button>
+          <button data-action="scan100" data-id="${p.uid}">📡 סורק 100</button>
+          <button data-action="hint1" data-id="${p.uid}">1️⃣ רמז ספרה</button>
+          <button data-action="hint2" data-id="${p.uid}">2️⃣ רמז 2 ספרות</button>
+          <button data-action="lucky" data-id="${p.uid}">🍀 מתקפת מזל</button>
+          <button data-action="auto" data-id="${p.uid}">🤖 פיצוח אוטומטי</button>
+          <button data-action="duel" data-id="${p.uid}">⚔️ דו־קרב</button>
+        </div>
       </div>
     `;
   }).join("");
@@ -551,9 +562,50 @@ function renderUsers() {
   box.querySelectorAll(".dots").forEach(btn => {
     btn.onclick = (e) => {
       e.stopPropagation();
-      selectedTarget = others.find(p => p.uid === btn.dataset.id);
+      const uid = btn.dataset.id;
+      selectedTarget = others.find(p => p.uid === uid);
       html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
-      toast("נבחר שחקן אמיתי");
+
+      document.querySelectorAll(".playerActionMenu").forEach(menu => {
+        if (menu.dataset.menu !== uid) menu.classList.add("hidden");
+      });
+
+      const menu = document.querySelector(`.playerActionMenu[data-menu="${uid}"]`);
+      if (menu) menu.classList.toggle("hidden");
+    };
+  });
+
+  box.querySelectorAll(".playerActionMenu button").forEach(actionBtn => {
+    actionBtn.onclick = async (e) => {
+      e.stopPropagation();
+      const uid = actionBtn.dataset.id;
+      selectedTarget = others.find(p => p.uid === uid);
+      if (!selectedTarget) return;
+
+      html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
+      document.querySelectorAll(".playerActionMenu").forEach(menu => menu.classList.add("hidden"));
+
+      const action = actionBtn.dataset.action;
+
+      if (action === "select") {
+        text("terminal", "> selected from menu: " + selectedTarget.name);
+        toast("נבחר שחקן");
+        return;
+      }
+
+      if (action === "regular") {
+        text("terminal", "> regular hack selected\\n> כתוב קוד 3 ספרות ואז לחץ פרוץ");
+        text("guessResult", "בחרת פריצה רגילה. כתוב קוד ולחץ פרוץ.");
+        return;
+      }
+
+      if (action === "scan10") return $("useScan10Btn")?.click();
+      if (action === "scan100") return $("useScan100Btn")?.click();
+      if (action === "hint1") return $("useHint1Btn")?.click();
+      if (action === "hint2") return $("useHint2Btn")?.click();
+      if (action === "lucky") return $("useLuckyBtn")?.click();
+      if (action === "auto") return $("useAutoBtn")?.click();
+      if (action === "duel") return $("useDuelBtn")?.click();
     };
   });
 }
@@ -937,3 +989,11 @@ function setupLogin() {
 setupTabs();
 setupActions();
 setupLogin();
+
+
+function closeAllPlayerActionMenus(){
+  document.querySelectorAll(".playerActionMenu").forEach(menu => menu.classList.add("hidden"));
+}
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".userCard")) closeAllPlayerActionMenus();
+});

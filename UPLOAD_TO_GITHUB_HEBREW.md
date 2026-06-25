@@ -13,3 +13,7 @@
 - Ctrl + F5 באתר
 
 צריך גם Realtime Database פעיל עם ה-Rules שב-README.
+
+
+עדכון V64:
+להעלות את כל הקבצים ולעשות Ctrl+F5.

@@ -802,3 +802,31 @@ textarea:focus{
 @media(max-width:700px){
   .attackTools{grid-template-columns:1fr}
 }
+
+/* V64 dots action menu */
+.userCard{
+  position:relative;
+}
+.playerActionMenu{
+  position:absolute;
+  left:14px;
+  top:62px;
+  z-index:999;
+  min-width:205px;
+  padding:10px;
+  border-radius:16px;
+  background:rgba(5,12,22,.98);
+  border:1px solid rgba(80,220,255,.35);
+  box-shadow:0 18px 45px rgba(0,0,0,.45);
+  display:grid;
+  gap:8px;
+}
+.playerActionMenu button{
+  width:100%;
+  text-align:right;
+  padding:10px 12px;
+  border-radius:12px;
+}
+.playerActionMenu.hidden{
+  display:none!important;
+}
