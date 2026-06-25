@@ -66,7 +66,8 @@ function toast(msg) {
 }
 
 function userKey(user) {
-  return "hackzone_v64_" + (user.email || user.uid || "guest").toLowerCase();
+  const id = (user.email || user.uid || "guest").toLowerCase();
+  return "hackzone_v65_" + id;
 }
 function makeDefault(user) {
   const inputName = ($("gameName")?.value || "").trim();
@@ -97,10 +98,20 @@ function makeDefault(user) {
   };
 }
 function loadMe(user) {
-  try {
-    const raw = localStorage.getItem(userKey(user));
-    if (raw) return { ...makeDefault(user), ...JSON.parse(raw) };
-  } catch {}
+  const id = (user.email || user.uid || "guest").toLowerCase();
+  const keys = [
+    userKey(user),
+    "hackzone_v64_" + id,
+    "hackzone_v63_" + id,
+    "hackzone_v62_" + id,
+    "hackzone_v61_" + id
+  ];
+  for (const key of keys) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) return { ...makeDefault(user), ...JSON.parse(raw) };
+    } catch {}
+  }
   return makeDefault(user);
 }
 function saveLocal() {
@@ -259,6 +270,52 @@ async function processIncomingAttack(attackId, attack) {
     showForceCode();
     msg = `התבקשת להחליף קוד משחק.`;
     eventLog(msg);
+    await remove(ref(db, "attacks/" + currentUser.uid + "/" + attackId)).catch(()=>{});
+    saveMe();
+    render();
+    return;
+  }
+
+
+  if (type === "adminGift") {
+    applyAdminItemChange(String(attack.item || "points"), clamp(attack.amount, 1, 999), true);
+    msg = `אדמין נתן לך ${attack.amount || 1} × ${adminItemLabel(attack.item || "points")}.`;
+    eventLog(msg);
+    showGift(msg);
+    await remove(ref(db, "attacks/" + currentUser.uid + "/" + attackId)).catch(()=>{});
+    saveMe();
+    render();
+    return;
+  }
+
+  if (type === "adminRemove") {
+    applyAdminItemChange(String(attack.item || "points"), clamp(attack.amount, 1, 999), false);
+    msg = `אדמין הוריד לך ${attack.amount || 1} × ${adminItemLabel(attack.item || "points")}.`;
+    eventLog(msg);
+    toast(msg);
+    await remove(ref(db, "attacks/" + currentUser.uid + "/" + attackId)).catch(()=>{});
+    saveMe();
+    render();
+    return;
+  }
+
+  if (type === "resetAttempts") {
+    me.attemptsDay = TODAY();
+    me.attemptsLeft = 10;
+    msg = "אדמין איפס לך ניסיונות יומיים.";
+    eventLog(msg);
+    toast(msg);
+    await remove(ref(db, "attacks/" + currentUser.uid + "/" + attackId)).catch(()=>{});
+    saveMe();
+    render();
+    return;
+  }
+
+  if (type === "unban") {
+    me.banUntil = 0;
+    msg = "אדמין הסיר לך באן.";
+    eventLog(msg);
+    toast(msg);
     await remove(ref(db, "attacks/" + currentUser.uid + "/" + attackId)).catch(()=>{});
     saveMe();
     render();
@@ -502,12 +559,17 @@ function render() {
   text("investCash", me.points + " נק׳ זמינות");
   text("investTotal", me.investments.reduce((s,i)=>s+i.amount,0) + " נק׳");
 
+  const admin = isAdmin();
+  if ($("adminNav")) $("adminNav").classList.toggle("hidden", !admin);
+  if ($("aiFixSystemBtn")) $("aiFixSystemBtn").classList.toggle("hidden", !admin);
+
   renderUsers();
   renderCaptured();
   renderShopOutput();
   renderEvents();
   renderLeaderboard();
   renderInvestments();
+  renderAdmin();
 }
 
 function renderUsers() {
@@ -527,88 +589,124 @@ function renderUsers() {
 
   box.innerHTML = others.map(p => {
     const hacked = num(p.hackedUntil) > now();
+    const adminMark = isAdminPlayer(p) ? `<span class="adminBadge">אדמין</span>` : "";
     return `
       <div class="userCard" data-id="${p.uid}">
+        <button class="dotsBtn" data-id="${p.uid}" title="פעולות">⋮</button>
         <img class="avatar" src="${p.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=" + encodeURIComponent(p.name)}" />
-        <div>
-          <b>${p.name}</b>
+        <div class="info">
+          <b>${p.name} ${adminMark}</b>
           <span class="${hacked ? "statusHacked" : "statusOnline"}">${num(p.points)} נק׳ · ${hacked ? "נפרץ כרגע" : "מחובר עכשיו"}</span>
         </div>
-        <button class="dots" data-id="${p.uid}" title="פעולות">⋮</button>
-        <div class="playerActionMenu hidden" data-menu="${p.uid}">
-          <button data-action="select" data-id="${p.uid}">🎯 בחר שחקן</button>
-          <button data-action="regular" data-id="${p.uid}">🔓 פריצה רגילה</button>
-          <button data-action="scan10" data-id="${p.uid}">🔎 סורק 10</button>
-          <button data-action="scan100" data-id="${p.uid}">📡 סורק 100</button>
-          <button data-action="hint1" data-id="${p.uid}">1️⃣ רמז ספרה</button>
-          <button data-action="hint2" data-id="${p.uid}">2️⃣ רמז 2 ספרות</button>
-          <button data-action="lucky" data-id="${p.uid}">🍀 מתקפת מזל</button>
-          <button data-action="auto" data-id="${p.uid}">🤖 פיצוח אוטומטי</button>
-          <button data-action="duel" data-id="${p.uid}">⚔️ דו־קרב</button>
-        </div>
+        <div class="dot"></div>
       </div>
     `;
   }).join("");
 
   box.querySelectorAll(".userCard").forEach(card => {
     card.onclick = (e) => {
-      if (e.target.classList.contains("dots")) return;
-      selectedTarget = others.find(p => p.uid === card.dataset.id);
-      html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
-      text("terminal", "> real player selected: " + selectedTarget.name + "\\n> choose hack type or guess game code");
-    };
-  });
-
-  box.querySelectorAll(".dots").forEach(btn => {
-    btn.onclick = (e) => {
-      e.stopPropagation();
-      const uid = btn.dataset.id;
-      selectedTarget = others.find(p => p.uid === uid);
-      html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
-
-      document.querySelectorAll(".playerActionMenu").forEach(menu => {
-        if (menu.dataset.menu !== uid) menu.classList.add("hidden");
-      });
-
-      const menu = document.querySelector(`.playerActionMenu[data-menu="${uid}"]`);
-      if (menu) menu.classList.toggle("hidden");
-    };
-  });
-
-  box.querySelectorAll(".playerActionMenu button").forEach(actionBtn => {
-    actionBtn.onclick = async (e) => {
-      e.stopPropagation();
-      const uid = actionBtn.dataset.id;
+      if (e.target.closest(".dotsBtn")) return;
+      const uid = card.dataset.id;
       selectedTarget = others.find(p => p.uid === uid);
       if (!selectedTarget) return;
-
       html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
-      document.querySelectorAll(".playerActionMenu").forEach(menu => menu.classList.add("hidden"));
-
-      const action = actionBtn.dataset.action;
-
-      if (action === "select") {
-        text("terminal", "> selected from menu: " + selectedTarget.name);
-        toast("נבחר שחקן");
-        return;
-      }
-
-      if (action === "regular") {
-        text("terminal", "> regular hack selected\\n> כתוב קוד 3 ספרות ואז לחץ פרוץ");
-        text("guessResult", "בחרת פריצה רגילה. כתוב קוד ולחץ פרוץ.");
-        return;
-      }
-
-      if (action === "scan10") return $("useScan10Btn")?.click();
-      if (action === "scan100") return $("useScan100Btn")?.click();
-      if (action === "hint1") return $("useHint1Btn")?.click();
-      if (action === "hint2") return $("useHint2Btn")?.click();
-      if (action === "lucky") return $("useLuckyBtn")?.click();
-      if (action === "auto") return $("useAutoBtn")?.click();
-      if (action === "duel") return $("useDuelBtn")?.click();
+      text("terminal", "> real player selected: " + selectedTarget.name + "\n> choose hack type or guess game code");
+      closePlayerMenu();
     };
   });
 }
+
+
+function isAdmin() {
+  const name = (me?.name || "").trim().toLowerCase();
+  const email = (me?.googleEmail || currentUser?.email || "").trim().toLowerCase();
+  return name === "עמית" || name === "amit" || email === "amithofmans@gmail.com";
+}
+function isAdminPlayer(p) {
+  const name = (p?.name || "").trim().toLowerCase();
+  return name === "עמית" || name === "amit";
+}
+function ensurePlayerMenu() {
+  let menu = $("playerMenuFloating");
+  if (!menu) {
+    menu = document.createElement("div");
+    menu.id = "playerMenuFloating";
+    menu.className = "floatingPlayerMenu hidden";
+    document.body.appendChild(menu);
+  }
+  return menu;
+}
+function closePlayerMenu() {
+  const menu = $("playerMenuFloating");
+  if (menu) menu.classList.add("hidden");
+}
+function selectTargetByUid(uid) {
+  selectedTarget = realPlayers.find(p => p.uid === uid);
+  if (!selectedTarget) return false;
+  html("targetBox", `<b>${selectedTarget.name}</b><br><span>${num(selectedTarget.points)} נק׳ · שחקן אמיתי</span>`);
+  return true;
+}
+function openPlayerMenu(uid, x, y) {
+  if (!selectTargetByUid(uid)) return;
+  const menu = ensurePlayerMenu();
+  menu.innerHTML = `
+    <button data-action="select" data-id="${uid}">🎯 בחר שחקן</button>
+    <button data-action="regular" data-id="${uid}">🔓 פריצה רגילה</button>
+    <button data-action="scan10" data-id="${uid}">🔎 סורק 10</button>
+    <button data-action="scan100" data-id="${uid}">📡 סורק 100</button>
+    <button data-action="hint1" data-id="${uid}">1️⃣ רמז ספרה</button>
+    <button data-action="hint2" data-id="${uid}">2️⃣ רמז 2 ספרות</button>
+    <button data-action="lucky" data-id="${uid}">🍀 מתקפת מזל</button>
+    <button data-action="auto" data-id="${uid}">🤖 פיצוח אוטומטי</button>
+    <button data-action="duel" data-id="${uid}">⚔️ דו־קרב</button>
+  `;
+  const left = Math.max(8, Math.min(window.innerWidth - 245, x - 215));
+  const top = Math.max(8, Math.min(window.innerHeight - 390, y - 20));
+  menu.style.left = left + "px";
+  menu.style.top = top + "px";
+  menu.classList.remove("hidden");
+}
+async function runPlayerMenuAction(action, uid) {
+  if (!selectTargetByUid(uid)) return;
+  closePlayerMenu();
+
+  if (action === "select") {
+    text("terminal", "> selected from menu: " + selectedTarget.name);
+    toast("נבחר שחקן");
+    return;
+  }
+  if (action === "regular") {
+    text("terminal", "> regular hack selected\\n> כתוב קוד 3 ספרות ואז לחץ פרוץ");
+    text("guessResult", "בחרת פריצה רגילה. כתוב קוד ולחץ פרוץ.");
+    return;
+  }
+  if (action === "scan10") return $("useScan10Btn")?.click();
+  if (action === "scan100") return $("useScan100Btn")?.click();
+  if (action === "hint1") return $("useHint1Btn")?.click();
+  if (action === "hint2") return $("useHint2Btn")?.click();
+  if (action === "lucky") return $("useLuckyBtn")?.click();
+  if (action === "auto") return $("useAutoBtn")?.click();
+  if (action === "duel") return $("useDuelBtn")?.click();
+}
+document.addEventListener("click", async (e) => {
+  const dot = e.target.closest(".dotsBtn");
+  if (dot) {
+    e.preventDefault();
+    e.stopPropagation();
+    openPlayerMenu(dot.dataset.id, e.clientX, e.clientY);
+    return;
+  }
+
+  const menuBtn = e.target.closest("#playerMenuFloating button");
+  if (menuBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    await runPlayerMenuAction(menuBtn.dataset.action, menuBtn.dataset.id);
+    return;
+  }
+
+  if (!e.target.closest("#playerMenuFloating")) closePlayerMenu();
+});
 
 function renderCaptured() {
   const el = $("capturedList");
@@ -649,6 +747,141 @@ function renderInvestments() {
     return;
   }
   el.innerHTML = me.investments.map(i=>`<div class="investItem"><b>${i.type}</b><span>${i.amount} נק׳</span></div>`).join("");
+}
+
+
+const ADMIN_ITEMS = {
+  points: "מטבעות",
+  shield: "מגן פריצה",
+  scan10: "סורק 10",
+  scan100: "סורק 100",
+  hint1: "רמז ספרה ראשונה",
+  hint2: "רמז 2 ספרות",
+  lucky: "מתקפת מזל",
+  autoHack: "פיצוח אוטומטי",
+  duel: "כרטיס דו־קרב",
+  duelShield: "מגן דו־קרב",
+  boost: "בוסט כפול",
+  insurance: "ביטוח פריצה",
+  vault: "כספת 500",
+  extraAttempt: "ניסיון יומי נוסף",
+  trap: "מלכודת פריצה",
+  cooldownKey: "מפתח קירור"
+};
+function adminItemLabel(item) {
+  return ADMIN_ITEMS[item] || item || "מוצר";
+}
+function applyAdminItemChange(item, amount, add) {
+  amount = clamp(amount, 1, 999);
+  const dir = add ? 1 : -1;
+
+  if (item === "points") me.points = Math.max(0, num(me.points) + dir * amount);
+  else if (item === "shield") me.shields = Math.max(0, num(me.shields) + dir * amount);
+  else if (item === "duelShield") me.duelShields = Math.max(0, num(me.duelShields) + dir * amount);
+  else if (item === "boost") me.rewardBoosts = Math.max(0, num(me.rewardBoosts) + dir * amount);
+  else if (item === "insurance") me.insurances = Math.max(0, num(me.insurances) + dir * amount);
+  else if (item === "vault") me.vaults = Math.max(0, num(me.vaults) + dir * amount);
+  else if (item === "extraAttempt") me.attemptsLeft = Math.max(0, num(me.attemptsLeft) + dir * amount);
+  else if (item === "trap") me.traps = Math.max(0, num(me.traps) + dir * amount);
+  else {
+    const label = adminItemLabel(item);
+    me.inventory[label] = Math.max(0, num(me.inventory[label]) + dir * amount);
+    if (me.inventory[label] <= 0) delete me.inventory[label];
+  }
+}
+function renderAdmin() {
+  const nav = $("adminNav");
+  if (nav) nav.classList.toggle("hidden", !isAdmin());
+
+  if (!$("adminTargetSelect")) return;
+  if (!isAdmin()) return;
+
+  const sel = $("adminTargetSelect");
+  const old = sel.value;
+  const list = realPlayers.slice().sort((a,b)=>String(a.name).localeCompare(String(b.name), "he"));
+  sel.innerHTML = list.length
+    ? list.map(u => `<option value="${u.uid}">${u.name}${u.uid===currentUser?.uid ? " (אני)" : ""} · ${num(u.points)} נק׳</option>`).join("")
+    : `<option value="">אין שחקנים מחוברים</option>`;
+
+  if (old && list.some(u => u.uid === old)) sel.value = old;
+  updateAdminTargetInfo();
+}
+function getAdminTarget() {
+  const id = $("adminTargetSelect")?.value || "";
+  return realPlayers.find(p => p.uid === id);
+}
+function updateAdminTargetInfo() {
+  const box = $("adminTargetInfo");
+  if (!box) return;
+  const u = getAdminTarget();
+  if (!u) {
+    box.textContent = "בחר שחקן מהרשימה.";
+    return;
+  }
+  const hacked = num(u.hackedUntil) > now();
+  box.innerHTML = `
+    <b>${u.name}</b><br>
+    ${num(u.points)} נק׳ · ${u.online ? "מחובר" : "לא מחובר"} · ${hacked ? "נפרץ כרגע" : "פעיל"}<br>
+    UID: ${u.uid}
+  `;
+}
+function showAdminOutput(msg, good=true) {
+  const out = $("adminOutput");
+  if (!out) return;
+  out.classList.remove("hidden");
+  out.innerHTML = `<p class="${good ? "result good" : "result bad"}">${msg}</p>`;
+}
+async function adminSendToTarget(type, payload={}) {
+  if (!isAdmin()) return showAdminOutput("אין הרשאת אדמין.", false);
+  const target = getAdminTarget();
+  if (!target) return showAdminOutput("בחר שחקן.", false);
+
+  if (target.uid === currentUser?.uid) {
+    if (type === "adminGift") applyAdminItemChange(payload.item, payload.amount, true);
+    if (type === "adminRemove") applyAdminItemChange(payload.item, payload.amount, false);
+    if (type === "resetAttempts") { me.attemptsDay = TODAY(); me.attemptsLeft = 10; }
+    if (type === "forceCode") showForceCode();
+    if (type === "ban") me.banUntil = now() + clamp(payload.minutes,1,60) * 60_000;
+    if (type === "unban") me.banUntil = 0;
+    eventLog("אדמין הפעיל פעולה על עצמו: " + type);
+    saveMe();
+    render();
+    return showAdminOutput("בוצע עליך.");
+  }
+
+  await sendAttack(target.uid, { type, ...payload });
+  showAdminOutput("נשלח לשחקן " + target.name + " ✅");
+}
+function setupAdminActions() {
+  const sel = $("adminTargetSelect");
+  if (sel) sel.onchange = updateAdminTargetInfo;
+
+  const give = $("adminGiveGiftBtn");
+  if (give) give.onclick = () => adminSendToTarget("adminGift", {
+    item: $("adminGiftItem")?.value || "points",
+    amount: clamp($("adminGiftAmount")?.value, 1, 999)
+  });
+
+  const removeBtn = $("adminRemoveGiftBtn");
+  if (removeBtn) removeBtn.onclick = () => adminSendToTarget("adminRemove", {
+    item: $("adminGiftItem")?.value || "points",
+    amount: clamp($("adminGiftAmount")?.value, 1, 999)
+  });
+
+  const reset = $("adminResetAttemptsBtn");
+  if (reset) reset.onclick = () => adminSendToTarget("resetAttempts");
+
+  const force = $("adminForceCodeBtn");
+  if (force) force.onclick = () => adminSendToTarget("forceCode");
+
+  const ban = $("adminBanBtn");
+  if (ban) ban.onclick = () => adminSendToTarget("ban", {
+    minutes: clamp($("adminBanMinutes")?.value, 1, 60),
+    reason: ($("adminBanReason")?.value || "אדמין").slice(0, 80)
+  });
+
+  const unban = $("adminUnbanBtn");
+  if (unban) unban.onclick = () => adminSendToTarget("unban");
 }
 
 function setupTabs() {
@@ -988,12 +1221,5 @@ function setupLogin() {
 
 setupTabs();
 setupActions();
+setupAdminActions();
 setupLogin();
-
-
-function closeAllPlayerActionMenus(){
-  document.querySelectorAll(".playerActionMenu").forEach(menu => menu.classList.add("hidden"));
-}
-document.addEventListener("click", (e) => {
-  if (!e.target.closest(".userCard")) closeAllPlayerActionMenus();
-});

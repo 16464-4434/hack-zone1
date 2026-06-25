@@ -1,6 +1,6 @@
-# העלאה ל-GitHub
+# V65 העלאה
 
-תעלה:
+תעלה את כל הקבצים ל-GitHub:
 - index.html
 - style.css
 - script.js
@@ -8,12 +8,10 @@
 - UPLOAD_TO_GITHUB_HEBREW.md
 
 ואז:
-- Commit changes
-- חכה דקה
-- Ctrl + F5 באתר
+1. Commit changes
+2. חכה דקה
+3. באתר Ctrl + F5
 
-צריך גם Realtime Database פעיל עם ה-Rules שב-README.
-
-
-עדכון V64:
-להעלות את כל הקבצים ולעשות Ctrl+F5.
+אדמין:
+כדי לראות מצב אדמין, שם המשחק שלך צריך להיות:
+עמית

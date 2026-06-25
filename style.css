@@ -803,30 +803,50 @@ textarea:focus{
   .attackTools{grid-template-columns:1fr}
 }
 
-/* V64 dots action menu */
-.userCard{
-  position:relative;
-}
-.playerActionMenu{
+/* V65 fixed floating dots menu + admin */
+.dotsBtn{
   position:absolute;
-  left:14px;
-  top:62px;
-  z-index:999;
-  min-width:205px;
+  left:18px;
+  top:50%;
+  transform:translateY(-50%);
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  z-index:5;
+}
+.floatingPlayerMenu{
+  position:fixed;
+  z-index:99999;
+  width:230px;
+  max-width:calc(100vw - 24px);
   padding:10px;
-  border-radius:16px;
+  border-radius:18px;
   background:rgba(5,12,22,.98);
-  border:1px solid rgba(80,220,255,.35);
-  box-shadow:0 18px 45px rgba(0,0,0,.45);
+  border:1px solid rgba(80,220,255,.38);
+  box-shadow:0 22px 60px rgba(0,0,0,.55);
   display:grid;
   gap:8px;
 }
-.playerActionMenu button{
+.floatingPlayerMenu.hidden{display:none!important}
+.floatingPlayerMenu button{
   width:100%;
+  min-height:40px;
   text-align:right;
-  padding:10px 12px;
   border-radius:12px;
+  padding:10px 12px;
 }
-.playerActionMenu.hidden{
-  display:none!important;
+.adminBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 8px;
+  border-radius:999px;
+  background:rgba(255,211,93,.18);
+  border:1px solid rgba(255,211,93,.35);
+  color:#ffd35d;
+  font-size:12px;
+  margin-inline-start:6px;
+}
+.adminTargetInfo{
+  line-height:1.7;
 }
